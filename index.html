@@ -1,54 +1,96 @@
-<script src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places"></script>
-<input type="text" id="autocomplete">
-<div id="map"></div>
-<style>
-html, body, #map {
-  height: 100%;
-  margin: 0;
-}
+<html>
+<head><title>OpenLayers Marker Overload</title></head>
+<body>
+  <div id="mapdiv"></div>
+  <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+  <script>
+  
+    function rand(min, max) {
+      var offset = min;
+      var range = (max - min) + 1;
+     
+      var randomNumber = Math.floor( Math.random() * range) + offset;
+      return randomNumber;
+    }
 
-#autocomplete {
-  width: 100%;
-  height: 25px;
-}
-</style>
+  
+    map = new OpenLayers.Map("mapdiv");
+    map.addLayer(new OpenLayers.Layer.OSM());
+    
+    epsg4326 =  new OpenLayers.Projection("EPSG:4326"); //WGS 1984 projection
+    projectTo = map.getProjectionObject(); //The map projection (Spherical Mercator)
+   
+    var centrelon =  -78.895640;
+    var centrelat = 43.945341;
+    var lonLat = new OpenLayers.LonLat(centrelon , centrelat).transform(epsg4326, projectTo);
+          
+    
+    var zoom=14;
+    map.setCenter (lonLat, zoom);
 
-<script>
-var mapOptions = {
-    center: new google.maps.LatLng(43.944118,-78.895422),
-    zoom: 12,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-};
+    var vectorLayer = new OpenLayers.Layer.Vector("Overlay");
+    
+    // Define an array of markers   
+    var markers = [ ];
+    
+    var height = 0.01;
+    var width = 0.03;
+    
+    for (var i=0; i<100; i++) {
+        var lat = centrelat + (rand(-3000, 3000)/1000 * height);
+        var lon = centrelon + (rand(-3000, 3000)/1000 * width);
+		
+        markers.push( [ lon, lat, "marker " + i ]);
+        
+    }
+       
+    
+    //Loop through the markers array
+    for (var i=0; i<markers.length; i++) {
+      
+       var lon = markers[i][0];
+       var lat = markers[i][1];
+       var description = markers[i][2];
+       
+        var feature = new OpenLayers.Feature.Vector(
+                new OpenLayers.Geometry.Point( lon, lat ).transform(epsg4326, projectTo),
+                {description: description} ,
+                {externalGraphic: 'http://i.imgur.com/urqSMI9.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25  }
+            );             
+        vectorLayer.addFeatures(feature);
+    }                        
+    
+    map.addLayer(vectorLayer);
+ 
+    
+    //Add a selector control to the vectorLayer with popup functions
+    var controls = {
+      selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
+    };
 
-var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-var acOptions = {
-  types: ['establishment']
-};
-var autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'),acOptions);
-autocomplete.bindTo('bounds',map);
-var infoWindow = new google.maps.InfoWindow();
-var marker = new google.maps.Marker({
-  map: map
-});
+    function createPopup(feature) {
+      feature.popup = new OpenLayers.Popup.FramedCloud("pop",
+          feature.geometry.getBounds().getCenterLonLat(),
+          null,
+          '<div class="markerContent">'+feature.attributes.description+'</div>',
+          null,
+          true,
+          function() { controls['selector'].unselectAll(); }
+      );
+      //feature.popup.closeOnMove = true;
+      map.addPopup(feature.popup);
+    }
 
-google.maps.event.addListener(autocomplete, 'place_changed', function() {
-  infoWindow.close();
-  var place = autocomplete.getPlace();
-  if (place.geometry.viewport) {
-    map.fitBounds(place.geometry.viewport);
-  } else {
-    map.setCenter(place.geometry.location);
-    map.setZoom(17);
-  }
-  marker.setPosition(place.geometry.location);
-  infoWindow.setContent('<div><strong>' + place.name + '</strong><br>');
-  infoWindow.open(map, marker);
-  google.maps.event.addListener(marker,'click',function(e){
-
-    infoWindow.open(map, marker);
-
-  });
-});
-</script>
-</html>
-
+    function destroyPopup(feature) {
+      feature.popup.destroy();
+      feature.popup = null;
+    }
+    
+    map.addControl(controls['selector']);
+    controls['selector'].activate();
+    
+   
+  </script>
+  
+</body></html>
+    
