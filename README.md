@@ -1,6 +1,6 @@
- IoTSummer2016Group4
+## IoTSummer2016Group4
 
- Project Weather Trip Finder
+## Project Weather Trip Finder
 
 Requirements
 ======
