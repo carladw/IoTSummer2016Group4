@@ -1,5 +1,7 @@
 # IoTSummer2016Group4
 
+![alt tag](http://i.imgur.com/rkejgax.png)
+
 ## Project Weather Trip Finder
 
 Use in order to find whether the weather is satisfactory using Spark and OpenStreetMap API
