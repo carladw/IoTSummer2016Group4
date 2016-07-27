@@ -1,8 +1,6 @@
 # IoTSummer2016Group4
 
-Internet of Things - Group 4 Repository
-
-Project Weather Trip Finder
+# Project Weather Trip Finder
 
 Requirements
 ======
