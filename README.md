@@ -2,7 +2,7 @@
 
 ## Project Weather Trip Finder
 
-Finding whether the weather is satisfactory using Spark and OpenStreetMap API
+Use in order to find whether the weather is satisfactory using Spark and OpenStreetMap API
 
 Requirements
 ======
