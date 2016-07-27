@@ -2,6 +2,8 @@
 
 ## Project Weather Trip Finder
 
+Finding whether the weather is satisfactory using Spark and OpenStreetMap API
+
 Requirements
 ======
 To run index.html assets folder has to be in same directory.
