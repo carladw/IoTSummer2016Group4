@@ -1,96 +1,30 @@
+
 <html>
-<head><title>OpenLayers Marker Overload</title></head>
+<head><title>Internet of Things</title></head>
 <body>
   <div id="mapdiv"></div>
   <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
   <script>
-  
-    function rand(min, max) {
-      var offset = min;
-      var range = (max - min) + 1;
-     
-      var randomNumber = Math.floor( Math.random() * range) + offset;
-      return randomNumber;
-    }
-
-  
     map = new OpenLayers.Map("mapdiv");
     map.addLayer(new OpenLayers.Layer.OSM());
-    
-    epsg4326 =  new OpenLayers.Projection("EPSG:4326"); //WGS 1984 projection
-    projectTo = map.getProjectionObject(); //The map projection (Spherical Mercator)
-   
-    var centrelon =  -78.895640;
-    var centrelat = 43.945341;
-    var lonLat = new OpenLayers.LonLat(centrelon , centrelat).transform(epsg4326, projectTo);
-          
-    
-    var zoom=14;
-    map.setCenter (lonLat, zoom);
-
-    var vectorLayer = new OpenLayers.Layer.Vector("Overlay");
-    
-    // Define an array of markers   
-    var markers = [ ];
-    
-    var height = 0.01;
-    var width = 0.03;
-    
-    for (var i=0; i<100; i++) {
-        var lat = centrelat + (rand(-3000, 3000)/1000 * height);
-        var lon = centrelon + (rand(-3000, 3000)/1000 * width);
-		
-        markers.push( [ lon, lat, "marker " + i ]);
-        
-    }
        
-    
-    //Loop through the markers array
-    for (var i=0; i<markers.length; i++) {
-      
-       var lon = markers[i][0];
-       var lat = markers[i][1];
-       var description = markers[i][2];
-       
-        var feature = new OpenLayers.Feature.Vector(
-                new OpenLayers.Geometry.Point( lon, lat ).transform(epsg4326, projectTo),
-                {description: description} ,
-                {externalGraphic: 'http://i.imgur.com/urqSMI9.png', graphicHeight: 25, graphicWidth: 21, graphicXOffset:-12, graphicYOffset:-25  }
-            );             
-        vectorLayer.addFeatures(feature);
-    }                        
-    
-    map.addLayer(vectorLayer);
- 
-    
-    //Add a selector control to the vectorLayer with popup functions
-    var controls = {
-      selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
-    };
+    var pois = new OpenLayers.Layer.Text( "My Points",
+                    { location:"./assets/textfile.txt",
+                      projection: map.displayProjection
+                    });
+    map.addLayer(pois);
 
-    function createPopup(feature) {
-      feature.popup = new OpenLayers.Popup.FramedCloud("pop",
-          feature.geometry.getBounds().getCenterLonLat(),
-          null,
-          '<div class="markerContent">'+feature.attributes.description+'</div>',
-          null,
-          true,
-          function() { controls['selector'].unselectAll(); }
-      );
-      //feature.popup.closeOnMove = true;
-      map.addPopup(feature.popup);
-    }
-
-    function destroyPopup(feature) {
-      feature.popup.destroy();
-      feature.popup = null;
-    }
     
-    map.addControl(controls['selector']);
-    controls['selector'].activate();
+    //Set start centrepoint and zoom
+    //TODO: Is it possible to just zoom to extents of defined markers instead?
     
-   
+    var lonLat = new OpenLayers.LonLat( -78.895640, 43.945341 )
+          .transform(
+            new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+            map.getProjectionObject() // to Spherical Mercator Projection
+          );
+    var zoom=11;
+    map.setCenter (lonLat, zoom);  
   </script>
-  
+  <div id="explanation">Load some markers data from a text file, formatted in a particular CSV format: <a href="./assets/textfile.txt">textfile.txt</a></div>
 </body></html>
-    

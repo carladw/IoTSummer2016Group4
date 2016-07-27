@@ -1,0 +1,3 @@
+lat	lon	title	description	icon	iconSize	iconOffset
+43.945341	-78.895640	Title One	Description one<br>Second line.<br><br>(click again to close)	./assets/urqSMI9.png	24,24	0,-24
+43.944513	-78.895355	Title Two	Description two.	./assets/Smiley.png	16,16	-8,-8
