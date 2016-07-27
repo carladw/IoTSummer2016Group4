@@ -1,4 +1,17 @@
 # IoTSummer2016Group4
+
 Internet of Things - Group 4 Repository
 
-To run index.html you need to download assets folder to load images
+Project Weather Trip Finder
+
+Requirements
+======
+To run index.html assets folder has to be in same directory.
+
+* Java 8 or higher (<http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html>)
+* Maven 3 or higher (<http://maven.apache.org/>)
+* Eclipse (<https://eclipse.org/>)
+
+Running
+======
+To run, use eclipse to compile main.java and build index.html on a web browser.
